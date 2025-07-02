@@ -6,86 +6,270 @@
 #include <dt-bindings/zmk/pointing.h>
 #include <dt-bindings/zmk/rgb.h>
 
+
+#define MEH(key) LA(LC(LS(key)))
+
+
+// references to layers
+#define LAYER_Base 0
+#define LAYER_Symbol 1
+#define LAYER_NumNavi 2
+#define LAYER_Short 3
+#define LAYER_Magic 4
+#define LAYER_AutoMouse 5
+
+
+// sticky key configuration
+&sk {
+    quick-release;
+    lazy;
+};
+
+
+// Layer-RGB_STATUS Hold-Tap configuration
+// - tap: RGB status
+// - hold: momentary layer
+/ {
+    macros {
+        rgb_ug_status_macro: rgb_ug_status_macro {
+            label = "RGB_UG_STATUS";
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings
+                = <&rgb_ug RGB_STATUS>;
+        };
+    };
+    behaviors {
+        magic: magic {
+            compatible = "zmk,behavior-hold-tap";
+            label = "MAGIC_HOLD_TAP";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&rgb_ug_status_macro>;
+        };
+    };
+};
+
+
+// Bluetooth:
+// - one key to toggle the connection state of the selected device
+// - set the output to bluetooth before choosing the device
+/ {
+    macros {
+        bt_select: bt_select{
+            label = "BT_SELECT";
+            compatible = "zmk,behavior-macro-one-param";
+            #binding-cells = <1>;
+            bindings
+                = <&out OUT_BLE>,
+                  <&macro_param_1to2>,
+                  <&bt BT_SEL MACRO_PLACEHOLDER>;
+        };
+    };
+    behaviors {
+        bt_0: bt_0 {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BT_0";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&bt_select 0>, <&bt BT_DISC 0>;
+        };
+        bt_1: bt_1 {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BT_1";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&bt_select 1>, <&bt BT_DISC 1>;
+        };
+        bt_2: bt_2 {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BT_2";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&bt_select 2>, <&bt BT_DISC 2>;
+        };
+        bt_3: bt_3 {
+            compatible = "zmk,behavior-tap-dance";
+            label = "BT_3";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&bt_select 3>, <&bt BT_DISC 3>;
+        };
+    };
+};
+
+
+// One shot modifiers and layers
+/ {
+    behaviors {
+        sticky_shift: sticky_shift {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&sk LSHIFT>, <&kt LSHIFT>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+        };
+        osm_shift: one_shot_mod_shift {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sticky_shift>, <&kt LSHIFT>;
+        };
+        sticky_ctrl: sticky_ctrl {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&sk LCTRL>, <&kt LCTRL>;
+            mods = <(MOD_LCTL|MOD_RCTL)>;
+        };
+        osm_ctrl: one_shot_mod_ctrl {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sticky_ctrl>, <&kt LCTRL>;
+        };
+        sticky_alt: sticky_alt {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&sk LALT>, <&kt LALT>;
+            mods = <(MOD_LALT|MOD_RALT)>;
+        };
+        osm_alt: one_shot_mod_alt {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sticky_alt>, <&kt LALT>;
+        };
+        sticky_gui: sticky_gui {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&sk LGUI>, <&kt LGUI>;
+            mods = <(MOD_LGUI|MOD_RGUI)>;
+        };
+        osm_gui: one_shot_mod_gui {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sticky_gui>, <&kt LGUI>;
+        };
+
+
+        osl_symbol: one_shot_layer_symbol {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sl LAYER_Symbol>, <&to LAYER_Symbol>;
+        };
+        osl_numnavi: one_shot_layer_numnavi {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sl LAYER_NumNavi>, <&to LAYER_NumNavi>;
+        };
+        osl_short: one_shot_layer_short {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&sl LAYER_Short>, <&to LAYER_Short>;
+        };
+    };
+};
+
+
 / {
     chosen { zmk,matrix-transform = &imprint_function_row_full_bottom_row; };
 
     keymap {
         compatible = "zmk,keymap";
 
-        default_layer {
+        layer_Base {
             bindings = <
-&kp ESC    &kp F1  &kp F2    &kp F3    &kp F4    &kp F5              &kp F6     &kp F7    &kp F8     &kp F9    &kp F10   &kp F11
-&kp EQUAL  &kp N1  &kp N2    &kp N3    &kp N4    &kp N5              &kp N6     &kp N7    &kp N8     &kp N9    &kp N0    &kp MINUS
-&kp TAB    &kp Q   &kp W     &kp E     &kp R     &kp T               &kp Y      &kp U     &kp I      &kp O     &kp P     &kp BSLH
-&kp LCTRL  &kp A   &kp S     &kp D     &kp F     &kp G               &kp H      &kp J     &kp K      &kp L     &kp SEMI  &kp SQT
-&kp LSHFT  &kp Z   &kp X     &kp C     &kp V     &kp B               &kp N      &kp M     &kp COMMA  &kp DOT   &kp FSLH  &kp RSHFT
-&trans     &trans  &kp LGUI  &kp LALT  &trans                                   &trans    &kp LBKT   &kp RBKT  &trans    &trans
-                                       &kp RET   &kp DEL  &kp ESC    &kp GRAVE  &kp BSPC  &kp SPACE
-                                       &kp LGUI  &mo 1    &mo 2      &kp CAPS   &mo 2     &mo 1
+&none                 &none   &none     &none     &none       &none                   &none    &none       &none         &none     &none     &none
+&kp F1                &kp F2  &kp F3    &kp F4    &kp F5      &kp F6                  &kp F7   &kp F8      &kp F9        &kp F10   &kp F11   &kp F12
+&none                 &kp Q   &kp W     &kp E     &kp R       &kp T                   &kp Y    &kp U       &kp I         &kp O     &kp P     &none
+&none                 &kp A   &kp S     &kp D     &kp F       &kp G                   &kp H    &kp J       &kp K         &kp L     &kp SEMI  &none
+&none                 &kp Z   &kp X     &kp C     &kp V       &kp B                   &kp N    &kp M       &kp COMMA     &kp DOT   &kp FSLH  &none
+&magic LAYER_Magic 0  &none   &osm_alt  &osm_gui  &osm_ctrl                                    &osm_ctrl   &osm_gui      &osm_alt  &none     &magic LAYER_Magic 0
+                                                  &kp SPACE   &osl_symbol  &kp DEL    &kp ESC  &osl_short  &kp RET
+                                                  &osm_shift  &kp TAB      &none      &none    &kp BSPC    &osl_numnavi
             >;
         };
 
-        Numpad_Nav_Layer {
+        layer_Symbol {
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans            &trans  &trans    &trans    &trans     &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans            &trans  &trans    &trans    &trans     &trans  &trans
-&trans  &trans  &kp N7  &kp N8  &kp N9  &trans            &trans  &kp HOME  &kp UP    &kp END    &trans  &trans
-&trans  &trans  &kp N4  &kp N5  &kp N6  &trans            &trans  &kp LEFT  &kp DOWN  &kp RIGHT  &trans  &trans
-&trans  &trans  &kp N1  &kp N2  &kp N3  &trans            &trans  &trans    &trans    &trans     &trans  &trans
-&trans  &trans  &trans  &kp N0  &trans                            &trans    &trans    &trans     &trans  &trans
-                                &trans  &trans  &trans    &trans  &trans    &trans
-                                &trans  &trans  &trans    &trans  &trans    &trans
+&trans  &trans      &trans         &trans        &trans       &trans                       &trans      &trans         &trans         &trans        &trans        &trans
+&trans  &trans      &trans         &trans        &trans       &trans                       &trans      &trans         &trans         &trans        &trans        &trans
+&trans  &trans      &kp LS(GRAVE)  &kp LS(BSLH)  &kp LS(SQT)  &trans                       &trans      &kp LS(MINUS)  &kp LS(EQUAL)  &kp LS(LBKT)  &kp LS(RBKT)  &trans
+&trans  &kp LS(N1)  &kp LS(N2)     &kp LS(N3)    &kp LS(N4)   &kp LS(N5)                   &kp LS(N6)  &kp LS(N7)     &kp LS(N8)     &kp LS(N9)    &kp LS(N0)    &trans
+&trans  &trans      &kp GRAVE      &kp BSLH      &kp SQT      &trans                       &trans      &kp MINUS      &kp EQUAL      &kp LBKT      &kp RBKT      &trans
+&trans  &trans      &trans         &trans        &trans                                                &trans         &trans         &trans        &trans        &trans
+                                                 &trans       &tog LAYER_Symbol  &trans    &trans      &trans         &trans
+                                                 &trans       &trans             &trans    &trans      &trans         &trans
             >;
         };
 
-        Keyboard_Control_Layer {
+        layer_NumNavi {
             bindings = <
-&trans       &trans        &trans        &trans        &trans        &trans                  &trans  &trans           &trans           &trans           &trans           &trans
-&bt BT_CLR   &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4            &trans  &rgb_ug RGB_TOG  &rgb_ug RGB_EFF  &trans           &trans           &trans
-&sys_reset   &trans        &trans        &trans        &trans        &trans                  &rgb_ug RGB_TOG  &rgb_ug RGB_HUI  &rgb_ug RGB_SAI  &rgb_ug RGB_BRI  &rgb_ug RGB_SPI  &sys_reset
-&bootloader  &trans        &trans        &trans        &trans        &trans                  &trans  &rgb_ug RGB_HUD  &rgb_ug RGB_SAD  &rgb_ug RGB_BRD  &rgb_ug RGB_SPD  &bootloader
-&to 4        &trans        &trans        &trans        &trans        &trans                  &trans  &trans           &trans           &trans           &trans           &to 4
-&to 4        &trans        &trans        &trans        &trans                                        &trans           &trans           &trans           &trans           &to 4
-                                                       &trans        &trans        &trans    &trans  &trans           &trans
-                                                       &trans        &trans        &trans    &trans  &trans           &trans
+&trans  &trans  &trans          &trans          &trans           &trans            &trans  &trans  &trans  &trans      &trans   &trans
+&trans  &trans  &trans          &trans          &trans           &trans            &trans  &trans  &trans  &trans      &trans   &trans
+&trans  &trans  &kp HOME        &kp UP_ARROW    &kp PG_UP        &trans            &trans  &kp N7  &kp N8  &kp N9      &trans   &trans
+&trans  &trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans            &trans  &kp N4  &kp N5  &kp N6      &kp N0   &trans
+&trans  &trans  &kp END         &trans          &kp PG_DN        &trans            &trans  &kp N1  &kp N2  &kp N3      &kp DOT  &trans
+&trans  &trans  &trans          &trans          &trans                                     &trans  &trans  &trans      &trans   &trans
+                                                &trans           &trans  &trans    &trans  &trans  &trans
+                                                &trans           &trans  &trans    &trans  &trans  &tog LAYER_NumNavi
             >;
         };
 
-        Auto_Mouse_Layer {
+        layer_Short {
             bindings = <
-&trans  &trans  &trans     &trans     &trans     &trans            &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans     &trans     &trans     &trans            &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans     &trans     &trans     &trans            &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &mkp RCLK  &mkp MCLK  &mkp LCLK  &trans            &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans     &trans     &trans     &trans            &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans     &trans     &trans                               &trans  &trans  &trans  &trans  &trans
-                                      &trans     &trans  &trans    &trans  &trans  &trans
-                                      &trans     &trans  &trans    &trans  &trans  &trans
+&trans  &trans  &trans      &trans      &trans         &trans                     &trans  &trans            &trans        &trans  &trans      &trans
+&trans  &trans  &trans      &trans      &trans         &trans                     &trans  &trans            &trans        &trans  &trans      &trans
+&trans  &trans  &trans      &trans      &trans         &kp MEH(T)                 &trans  &trans            &trans        &trans  &kp MEH(P)  &trans
+&trans  &trans  &kp MEH(S)  &trans      &kp MEH(F)     &kp MEH(G)                 &trans  &kp MEH(J)        &trans        &trans  &trans      &trans
+&trans  &trans  &trans      &kp MEH(C)  &trans         &trans                     &trans  &trans            &trans        &trans  &trans      &trans
+&trans  &trans  &trans      &trans      &trans                                            &trans            &trans        &trans  &trans      &trans
+                                        &kp MEH(SPACE) &trans           &trans    &trans  &tog LAYER_Short  &kp MEH(RET)
+                                        &trans         &kp LA(LC(TAB))  &trans    &trans  &trans            &trans
             >;
         };
 
-        factory_test {
+        layer_Magic {
             bindings = <
-&kp N0  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5            &kp N6  &kp N7  &kp N8  &kp N9  &kp N0  &kp N1
-&kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &kp N7            &kp N8  &kp N9  &kp N0  &kp N1  &kp N2  &kp N3
-&kp N4  &kp N5  &kp N6  &kp N7  &kp N8  &kp N9            &kp N0  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5
-&kp N6  &kp N7  &kp N8  &kp N9  &kp N0  &kp N1            &kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &kp N7
-&kp N8  &kp N9  &kp N0  &kp N1  &kp N2  &kp N3            &kp N4  &kp N5  &kp N6  &kp N7  &kp N8  &kp N9
-&kp N0  &kp N1  &kp N2  &kp N3  &kp N4                            &kp N6  &kp N7  &kp N8  &kp N9  &kp N0
-                                &kp N1  &kp N2  &kp N3    &kp N4  &kp N5  &kp N6
-                                &kp N7  &kp N8  &kp N9    &kp N0  &kp N1  &kp N2
+&bt BT_CLR   &none            &none            &none            &none            &none                            &none  &none  &none  &none  &none  &bt BT_CLR_ALL
+&none        &none            &none            &none            &none            &none                            &none  &none  &none  &none  &none  &none
+&none        &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                  &none  &none  &none  &none  &none  &none
+&bootloader  &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                  &none  &none  &none  &none  &none  &bootloader
+&sys_reset   &none            &none            &none            &none            &none                            &none  &none  &none  &none  &none  &sys_reset
+&none        &none            &none            &none            &none                                                    &none  &none  &none  &none  &none
+                                                                &bt_0            &bt_1            &none           &none  &none  &none
+                                                                &bt_2            &bt_3            &out OUT_USB    &none  &none  &none
+            >;
+        };
+
+        layer_AutoMouse {
+            bindings = <
+&trans  &trans  &trans     &trans     &trans     &trans            &trans     &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans     &trans            &trans     &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans     &trans            &trans     &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &mkp RCLK  &mkp MCLK  &mkp LCLK  &trans            &trans     &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans     &trans            &trans     &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans     &trans     &trans                                  &trans  &trans  &trans  &trans  &trans
+                                      &trans     &trans  &trans    &mkp LCLK  &trans  &trans
+                                      &trans     &trans  &trans    &trans     &trans  &trans
             >;
         };
     };
 };
 
+
 // right hand trackball configuration
 
-// &trackball_peripheral_listener {
-//    input-processors =
-//     activate layer 3 within 500ms of the trackball moving
-//     <&zip_temp_layer 3 500>;
-// };
+&trackball_peripheral_listener {
+    input-processors =
+        // activate LAYER_AutoMouse within 500ms of the trackball moving
+        <&zip_temp_layer LAYER_AutoMouse 500>;
+};
+
 
 //left hand trackball configuration
 
