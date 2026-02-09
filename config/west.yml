@@ -12,8 +12,8 @@ manifest:
       revision: main
       import: app/west.yml
     - name: zmk-keyboards
-      remote: Cyboard-DigitalTailor
-      revision: main
+      remote: zhyu
+      revision: zephyr-4-1-bootloader
       import: config/west.yml
   self:
     path: config
