@@ -263,5 +263,7 @@
         // multiply sensitivity by 1, divide by 3 (make it slower for scrolling),
         <&zip_xy_scaler 1 3>,
         // make this trackball output scrolling events by default instead of cursor movement,
-        <&zip_xy_to_scroll_mapper>;
+        <&zip_xy_to_scroll_mapper>,
+        // invert horizontal scrolling so it becomes natural scrolling,
+        <&zip_scroll_transform INPUT_TRANSFORM_X_INVERT>;
 };
