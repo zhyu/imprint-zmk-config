@@ -11,11 +11,11 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: abb64ba
+      revision: v0.3.0
       import: app/west.yml
     - name: zmk-keyboards
       remote: zhyu
-      revision: pre-zephyr-4-1
+      revision: v0.3.0
       import: config/west.yml
   self:
     path: config
