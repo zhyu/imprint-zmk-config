@@ -4,8 +4,6 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: Cyboard-DigitalTailor
       url-base: https://github.com/Cyboard-DigitalTailor
-    - name: zhyu
-      url-base: https://github.com/zhyu
     # Additional modules containing boards/shields/custom code can be listed here as well
     # See https://docs.zephyrproject.org/3.2.0/develop/west/manifest.html#projects
   projects:
@@ -14,8 +12,8 @@ manifest:
       revision: v0.3.0
       import: app/west.yml
     - name: zmk-keyboards
-      remote: zhyu
-      revision: v0.3.0
+      remote: Cyboard-DigitalTailor
+      revision: v2026.07
       import: config/west.yml
   self:
     path: config
