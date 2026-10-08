@@ -151,7 +151,7 @@
 
 
 / {
-    chosen { zmk,matrix-transform = &imprint_number_row_full_bottom_row; };
+    chosen { zmk,physical-layout = &physical_layout_imprint_number_row_full_bottom_row; };
 
     keymap {
         compatible = "zmk,keymap";
